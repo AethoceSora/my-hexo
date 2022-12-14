@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "hexo": "^6.3.0"
+    "hexo": "^6.3.0",
+    "hexo-renderer-pug": "^3.0.0",
+    "hexo-renderer-stylus": "^2.1.0"
   }
 }
