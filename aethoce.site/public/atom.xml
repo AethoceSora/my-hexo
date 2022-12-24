@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2022-12-13T01:14:16.822Z</updated>
+  <updated>2022-12-24T12:00:18.193Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>云场景下的网络QoS</title>
+    <link href="http://example.com/2022/12/24/QoS/"/>
+    <id>http://example.com/2022/12/24/QoS/</id>
+    <published>2022-12-24T10:51:17.644Z</published>
+    <updated>2022-12-24T12:00:18.193Z</updated>
+    
+    <content type="html"><![CDATA[<p>公共的网络链路总会不可避免的产生带宽抢占的问题，我们通常使用QoS技术保障大多数用户的服务质量。</p><p><img src="https://static001.geekbang.org/resource/image/74/11/747b0d537fd1705171ffcca3faf96211.jpg?wh=1539*646" alt="img"></p><p>一台服务器能控制的只有出方向的QoS，通过Shaping将出站流量整形，至于入栈流量只能通过Policy决定丢弃哪一部分数据包。</p><h2 id="队列方式控制网络QoS"><a href="#队列方式控制网络QoS" class="headerlink" title="队列方式控制网络QoS"></a>队列方式控制网络QoS</h2><p>Linux下的TC就主要是使用队列技术控制的网络QoS。</p><h3 id="无类别排队规则"><a href="#无类别排队规则" class="headerlink" title="无类别排队规则"></a>无类别排队规则</h3><p>不分类（或称无类别）排队规则（classless queueing disciplines）可以对某个网络 接口（interface）上的所有流量进行<strong>无差别整形</strong>。包括对数据进行：</p><ul><li>重新调度（reschedule）</li><li>增加延迟（delay）</li><li>丢弃（drop）</li></ul><p>与 classless qdisc 对应的是 classful qdisc，即有类别（或称分类别）排队规则。目前最常用的classless qdisc 是<strong>pfifo_fast</strong>，这也是很多系统上的 默认排队规则。</p><h5 id="pfifo-fast-先入先出队列"><a href="#pfifo-fast-先入先出队列" class="headerlink" title="pfifo_fast 先入先出队列"></a>pfifo_fast 先入先出队列</h5><p>如名字所示，这是一个先入先出(FIFO)队列，因此对所有的包都一视同仁。</p><p><img src="https://arthurchiao.art/assets/img/lartc-qdisc/pfifo_fast-qdisc.png" alt="img"></p><p>pfifo_fast有三个所谓的 “band”（可理解为三个队列），编号分别为 0、1、2：</p><p><img src="https://static001.geekbang.org/resource/image/e3/6c/e391b4b79580a7d66afe4307ff3f6f6c.jpg?wh=2037*1175" alt="img"></p><ul><li>每个band上分别执行 FIFO 规则。</li><li>如果band 0有数据，就不会处理band 1；同理，band 1有数据时，不会去处理band 2。</li><li>内核会检查数据包的 <code>TOS</code>字段，将“最小延迟”的包放到band 0。</li></ul><h5 id="Stochastic-Fair-Queuing-随机公平队列"><a href="#Stochastic-Fair-Queuing-随机公平队列" class="headerlink" title="Stochastic Fair Queuing (随机公平队列)"></a>Stochastic Fair Queuing (随机公平队列)</h5><p><img src="https://static001.geekbang.org/resource/image/b6/99/b6ec2e4e20ddee7d6952b7fa4586ba99.jpg?wh=2177*1182" alt="img"></p><p>这种无类别队列规则会建立很多的 FIFO 的队列，TCP Session 会计算 hash 值，通过 hash 值分配到某个队列。在队列的另一端，网络包会通过轮询策略从各个队列中取出发送。这样不会有一个 Session 占据所有的流量。</p><p>当然，如果两个 Session 的 hash 是一样的，会共享一个队列，也有可能互相影响。hash 函数会经常改变，从而 session 不会总是相互影响。</p><h5 id="Tolen-Bucket-Filte-TBF-令牌桶规则"><a href="#Tolen-Bucket-Filte-TBF-令牌桶规则" class="headerlink" title="Tolen Bucket Filte (TBF,令牌桶规则)"></a>Tolen Bucket Filte (TBF,令牌桶规则)</h5><p><img src="https://static001.geekbang.org/resource/image/14/9b/145c6f8593bf7603eae79246b9d6859b.jpg?wh=1894*1100" alt="img"></p><p>所有的网络包排成队列进行发送，但不是到了队头就能发送，而是需要拿到令牌才能发送。</p><p>令牌根据设定的速度生成，所以即便队列很长，也是按照一定的速度进行发送的。当没有包在队列中的时候，令牌还是以既定的速度生成，但是不是无限累积的，而是放满了桶为止。</p><p>设置桶的大小为了避免下面的情况：当长时间没有网络包发送的时候，积累了大量的令牌，突然来了大量的网络包，每个都能得到令牌，造成瞬间流量大增。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;公共的网络链路总会不可避免的产生带宽抢占的问题，我们通常使用QoS技术保障大多数用户的服务质量。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static001.geekbang.org/resource/image/74/11/747b0d537fd1705171f</summary>
+      
+    
+    
+    
+    
+    <category term="Computer Network" scheme="http://example.com/tags/Computer-Network/"/>
+    
+  </entry>
   
   <entry>
     <title>高性能计算-基准测试程序Linpack（HPL）</title>
