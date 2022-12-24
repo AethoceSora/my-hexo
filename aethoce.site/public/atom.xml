@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2022-12-24T12:00:18.193Z</updated>
+  <updated>2022-12-13T01:14:16.822Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,29 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>云场景下的网络QoS</title>
-    <link href="http://example.com/2022/12/24/QoS/"/>
-    <id>http://example.com/2022/12/24/QoS/</id>
-    <published>2022-12-24T10:51:17.644Z</published>
-    <updated>2022-12-24T12:00:18.193Z</updated>
-    
-    <content type="html"><![CDATA[<p>公共的网络链路总会不可避免的产生带宽抢占的问题，我们通常使用QoS技术保障大多数用户的服务质量。</p><p><img src="https://static001.geekbang.org/resource/image/74/11/747b0d537fd1705171ffcca3faf96211.jpg?wh=1539*646" alt="img"></p><p>一台服务器能控制的只有出方向的QoS，通过Shaping将出站流量整形，至于入栈流量只能通过Policy决定丢弃哪一部分数据包。</p><h2 id="队列方式控制网络QoS"><a href="#队列方式控制网络QoS" class="headerlink" title="队列方式控制网络QoS"></a>队列方式控制网络QoS</h2><p>Linux下的TC就主要是使用队列技术控制的网络QoS。</p><h3 id="无类别排队规则"><a href="#无类别排队规则" class="headerlink" title="无类别排队规则"></a>无类别排队规则</h3><p>不分类（或称无类别）排队规则（classless queueing disciplines）可以对某个网络 接口（interface）上的所有流量进行<strong>无差别整形</strong>。包括对数据进行：</p><ul><li>重新调度（reschedule）</li><li>增加延迟（delay）</li><li>丢弃（drop）</li></ul><p>与 classless qdisc 对应的是 classful qdisc，即有类别（或称分类别）排队规则。目前最常用的classless qdisc 是<strong>pfifo_fast</strong>，这也是很多系统上的 默认排队规则。</p><h5 id="pfifo-fast-先入先出队列"><a href="#pfifo-fast-先入先出队列" class="headerlink" title="pfifo_fast 先入先出队列"></a>pfifo_fast 先入先出队列</h5><p>如名字所示，这是一个先入先出(FIFO)队列，因此对所有的包都一视同仁。</p><p><img src="https://arthurchiao.art/assets/img/lartc-qdisc/pfifo_fast-qdisc.png" alt="img"></p><p>pfifo_fast有三个所谓的 “band”（可理解为三个队列），编号分别为 0、1、2：</p><p><img src="https://static001.geekbang.org/resource/image/e3/6c/e391b4b79580a7d66afe4307ff3f6f6c.jpg?wh=2037*1175" alt="img"></p><ul><li>每个band上分别执行 FIFO 规则。</li><li>如果band 0有数据，就不会处理band 1；同理，band 1有数据时，不会去处理band 2。</li><li>内核会检查数据包的 <code>TOS</code>字段，将“最小延迟”的包放到band 0。</li></ul><h5 id="Stochastic-Fair-Queuing-随机公平队列"><a href="#Stochastic-Fair-Queuing-随机公平队列" class="headerlink" title="Stochastic Fair Queuing (随机公平队列)"></a>Stochastic Fair Queuing (随机公平队列)</h5><p><img src="https://static001.geekbang.org/resource/image/b6/99/b6ec2e4e20ddee7d6952b7fa4586ba99.jpg?wh=2177*1182" alt="img"></p><p>这种无类别队列规则会建立很多的 FIFO 的队列，TCP Session 会计算 hash 值，通过 hash 值分配到某个队列。在队列的另一端，网络包会通过轮询策略从各个队列中取出发送。这样不会有一个 Session 占据所有的流量。</p><p>当然，如果两个 Session 的 hash 是一样的，会共享一个队列，也有可能互相影响。hash 函数会经常改变，从而 session 不会总是相互影响。</p><h5 id="Tolen-Bucket-Filte-TBF-令牌桶规则"><a href="#Tolen-Bucket-Filte-TBF-令牌桶规则" class="headerlink" title="Tolen Bucket Filte (TBF,令牌桶规则)"></a>Tolen Bucket Filte (TBF,令牌桶规则)</h5><p><img src="https://static001.geekbang.org/resource/image/14/9b/145c6f8593bf7603eae79246b9d6859b.jpg?wh=1894*1100" alt="img"></p><p>所有的网络包排成队列进行发送，但不是到了队头就能发送，而是需要拿到令牌才能发送。</p><p>令牌根据设定的速度生成，所以即便队列很长，也是按照一定的速度进行发送的。当没有包在队列中的时候，令牌还是以既定的速度生成，但是不是无限累积的，而是放满了桶为止。</p><p>设置桶的大小为了避免下面的情况：当长时间没有网络包发送的时候，积累了大量的令牌，突然来了大量的网络包，每个都能得到令牌，造成瞬间流量大增。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;公共的网络链路总会不可避免的产生带宽抢占的问题，我们通常使用QoS技术保障大多数用户的服务质量。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://static001.geekbang.org/resource/image/74/11/747b0d537fd1705171f</summary>
-      
-    
-    
-    
-    
-    <category term="Computer Network" scheme="http://example.com/tags/Computer-Network/"/>
-    
-  </entry>
   
   <entry>
     <title>高性能计算-基准测试程序Linpack（HPL）</title>
@@ -63,6 +40,29 @@
   </entry>
   
   <entry>
+    <title>QLUT镜像站的日志监控及预警方案</title>
+    <link href="http://example.com/2022/12/07/Graf/"/>
+    <id>http://example.com/2022/12/07/Graf/</id>
+    <published>2022-12-06T17:27:20.000Z</published>
+    <updated>2022-12-24T15:39:11.541Z</updated>
+    
+    <content type="html"><![CDATA[<p>十分意外镜像站用户增长速度如此之快，面对日均五万左右的用户量，服务器频繁出现各种性能问题。在故障排查的过程中，我意识到服务器需要一套成熟、完整、可靠的日志监控及预警方案。</p><p>先前长期使用 <code>goaccess</code> 静态分析Nginx的日志，具有滞后性。只能用于单纯的分析总结一段时间内的网站流量状况，而无法做到实时监看服务状态和运行数据。</p><p>既然是开源镜像站，那么我们就需要把目光投向开源社区。</p><h2 id="较为流行的ELK"><a href="#较为流行的ELK" class="headerlink" title="较为流行的ELK"></a>较为流行的ELK</h2><p>目前市面上最流行的日志处理方案莫过于“ELK”系统，“ELK”是Elasticsearch、Logstash和Kibana的组合的合称。</p><p>Elasticsearch 是一个搜索和分析引擎。Logstash 是服务器端数据处理管道，能够同时从多个来源采集数据，转换数据，然后将数据发送到诸如 Elasticsearch 等“存储库”中。Kibana 则可以让用户在 Elasticsearch 中使用图形和图表对数据进行可视化。</p><h2 id="InfluxDB-amp-Telegraf"><a href="#InfluxDB-amp-Telegraf" class="headerlink" title="InfluxDB&amp;Telegraf"></a>InfluxDB&amp;Telegraf</h2><p>通过自己的初步了解以及咨询使用者的使用体验，我认为ELK在使用体验和性能上都不适合我（其实是单纯的不喜欢Java）。而一个朋友推荐我去尝试一下 InfluxDB+Telegraf 的组合。</p><p>服务器的性能日志从本质上来说，属于<strong>时序大数据</strong>，我们打开数据库排名网站<a href="https://db-engines.com/en/ranking">DB-Engines Ranking</a>，左侧选择时序数据库(<a href="https://db-engines.com/en/ranking/time+series+dbms">Time Series DBMS</a>)，可以看到 InfluxDB 在排名上一骑绝尘。</p><p><img src="https://s2.loli.net/2022/12/24/e8RbQm7i2Jj1Kzk.png" alt="image.png"></p><p>安装直接跟着官方文档即可，下面我将英文文档翻译一下给大家参考：</p><h4 id="使用-systemd-将-InfluxDB-安装为服务"><a href="#使用-systemd-将-InfluxDB-安装为服务" class="headerlink" title="使用 systemd 将 InfluxDB 安装为服务"></a>使用 systemd 将 InfluxDB 安装为服务</h4><ol><li><p>使用以下命令从<a href="https://portal.influxdata.com/downloads/">InfluxData 下载页面</a>使用 URL 下载并安装适当的<code>.deb</code>或文件：<code>.rpm</code></p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Ubuntu/Debian</span></span><br><span class="line">wget https://dl.influxdata.com/influxdb/releases/influxdb2-2.6.0-xxx.deb</span><br><span class="line">sudo dpkg -i influxdb2-2.6.0-xxx.deb</span><br><span class="line"></span><br><span class="line"><span class="comment"># Red Hat/CentOS/Fedora</span></span><br><span class="line">wget https://dl.influxdata.com/influxdb/releases/influxdb2-2.6.0-xxx.rpm</span><br><span class="line">sudo yum localinstall influxdb2-2.6.0-xxx.rpm</span><br></pre></td></tr></table></figure><p><em>使用<code>.rpm</code>包下载的确切文件名（例如，<code>influxdb2-2.6.0-amd64.rpm</code>）。</em></p></li><li><p>启动 InfluxDB 服务：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service influxdb start</span><br></pre></td></tr></table></figure><p>安装 InfluxDB 包会创建一个服务文件，<code>/lib/systemd/system/influxdb.service</code> 用于在启动时将 InfluxDB 作为后台服务启动。</p></li><li><p>重新启动系统并验证服务是否正常运行：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"> sudo service influxdb status</span></span><br><span class="line">● influxdb.service - InfluxDB is an open-source, distributed, time series database</span><br><span class="line">  Loaded: loaded (/lib/systemd/system/influxdb.service; enabled; vendor preset: enable&gt;</span><br><span class="line">  Active: active (running)</span><br></pre></td></tr></table></figure></li></ol><p>有关 InfluxDB 在作为服务运行时在磁盘上存储数据的位置的信息，请参阅<a href="https://docs.influxdata.com/influxdb/v2.6/reference/internals/file-system-layout/?t=Linux#installed-as-a-package">文件系统布局</a>。</p><p>要自定义 InfluxDB 配置，请使用 <a href="https://docs.influxdata.com/influxdb/v2.6/install/?t=Linux#pass-arguments-to-systemd">命令行标志（参数）</a>、环境变量或 InfluxDB 配置文件。有关详细信息，请参阅 InfluxDB<a href="https://docs.influxdata.com/influxdb/v2.6/reference/config-options/">配置选项</a>。</p><h4 id="将参数传递给-systemd"><a href="#将参数传递给-systemd" class="headerlink" title="将参数传递给 systemd"></a>将参数传递给 systemd</h4><ol><li><p>添加一行或多行命令，如下所示，包含<code>influxd</code>to的参数<code>/etc/default/influxdb2</code>：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ARG1=<span class="string">&quot;--http-bind-address :8087&quot;</span></span><br><span class="line">ARG2=<span class="string">&quot;&lt;another argument here&gt;&quot;</span></span><br></pre></td></tr></table></figure></li><li><p>编辑<code>/lib/systemd/system/influxdb.service</code>文件如下：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/usr/bin/influxd <span class="variable">$ARG1</span> <span class="variable">$ARG2</span></span><br></pre></td></tr></table></figure></li></ol><h4 id="启动-InfluxDB"><a href="#启动-InfluxDB" class="headerlink" title="启动 InfluxDB"></a>启动 InfluxDB</h4><p>如果 InfluxDB 作为 systemd 服务安装，则 systemd 管理<code>influxd</code>守护进程，不需要进一步的操作。如果二进制文件是手动下载并添加到系统中的，请使用以下命令<code>$PATH</code>启动守护进程：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">influxd</span><br></pre></td></tr></table></figure><p>进入8086端口配置好后，就可以在DashBoard里查阅可视化数据了。</p><p><img src="https://s2.loli.net/2022/12/24/2ybGTCxF6znZQJA.png" alt="image.png"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;十分意外镜像站用户增长速度如此之快，面对日均五万左右的用户量，服务器频繁出现各种性能问题。在故障排查的过程中，我意识到服务器需要一套成熟、完整、可靠的日志监控及预警方案。&lt;/p&gt;
+&lt;p&gt;先前长期使用 &lt;code&gt;goaccess&lt;/code&gt; 静态分析Nginx的日志，具有</summary>
+      
+    
+    
+    
+    
+    <category term="Devops" scheme="http://example.com/tags/Devops/"/>
+    
+  </entry>
+  
+  <entry>
     <title>记录镜像站遭遇SYN泛洪攻击的诊断与防御</title>
     <link href="http://example.com/2022/12/06/SYN/"/>
     <id>http://example.com/2022/12/06/SYN/</id>
@@ -81,6 +81,53 @@
     
     
     <category term="Cyberspace Security" scheme="http://example.com/tags/Cyberspace-Security/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>云场景下的网络QoS</title>
+    <link href="http://example.com/2022/10/13/QoS/"/>
+    <id>http://example.com/2022/10/13/QoS/</id>
+    <published>2022-10-13T12:46:25.000Z</published>
+    <updated>2022-12-24T14:59:34.257Z</updated>
+    
+    <content type="html"><![CDATA[<p>公共的网络链路总会不可避免的产生带宽抢占的问题，我们通常使用QoS技术保障大多数用户的服务质量。</p><p><img src="https://static001.geekbang.org/resource/image/74/11/747b0d537fd1705171ffcca3faf96211.jpg?wh=1539*646" alt="img"></p><p>一台服务器能控制的只有出方向的QoS，通过Shaping将出站流量整形，至于入栈流量只能通过Policy决定丢弃哪一部分数据包。</p><h2 id="队列方式控制网络QoS"><a href="#队列方式控制网络QoS" class="headerlink" title="队列方式控制网络QoS"></a>队列方式控制网络QoS</h2><p>Linux下的TC就主要是使用队列技术控制的网络QoS。</p><h3 id="无类别排队规则"><a href="#无类别排队规则" class="headerlink" title="无类别排队规则"></a>无类别排队规则</h3><p>不分类（或称无类别）排队规则（classless queueing disciplines）可以对某个网络 接口（interface）上的所有流量进行<strong>无差别整形</strong>。包括对数据进行：</p><ul><li>重新调度（reschedule）</li><li>增加延迟（delay）</li><li>丢弃（drop）</li></ul><p>与 classless qdisc 对应的是 classful qdisc，即有类别（或称分类别）排队规则。目前最常用的classless qdisc 是<strong>pfifo_fast</strong>，这也是很多系统上的 默认排队规则。</p><h5 id="pfifo-fast-先入先出队列"><a href="#pfifo-fast-先入先出队列" class="headerlink" title="pfifo_fast 先入先出队列"></a>pfifo_fast 先入先出队列</h5><p>如名字所示，这是一个先入先出(FIFO)队列，因此对所有的包都一视同仁。</p><p><img src="https://arthurchiao.art/assets/img/lartc-qdisc/pfifo_fast-qdisc.png" alt="img"></p><p>pfifo_fast有三个所谓的 “band”（可理解为三个队列），编号分别为 0、1、2：</p><p><img src="https://static001.geekbang.org/resource/image/e3/6c/e391b4b79580a7d66afe4307ff3f6f6c.jpg?wh=2037*1175" alt="img"></p><ul><li>每个band上分别执行 FIFO 规则。</li><li>如果band 0有数据，就不会处理band 1；同理，band 1有数据时，不会去处理band 2。</li><li>内核会检查数据包的 <code>TOS</code>字段，将“最小延迟”的包放到band 0。</li></ul><h5 id="Stochastic-Fair-Queuing-随机公平队列"><a href="#Stochastic-Fair-Queuing-随机公平队列" class="headerlink" title="Stochastic Fair Queuing (随机公平队列)"></a>Stochastic Fair Queuing (随机公平队列)</h5><p><img src="https://static001.geekbang.org/resource/image/b6/99/b6ec2e4e20ddee7d6952b7fa4586ba99.jpg?wh=2177*1182" alt="img"></p><p>这种无类别队列规则会建立很多的 FIFO 的队列，TCP Session 会计算 hash 值，通过 hash 值分配到某个队列。在队列的另一端，网络包会通过轮询策略从各个队列中取出发送。这样不会有一个 Session 占据所有的流量。</p><p>当然，如果两个 Session 的 hash 是一样的，会共享一个队列，也有可能互相影响。hash 函数会经常改变，从而 session 不会总是相互影响。</p><h5 id="Tolen-Bucket-Filte-TBF-令牌桶规则"><a href="#Tolen-Bucket-Filte-TBF-令牌桶规则" class="headerlink" title="Tolen Bucket Filte (TBF,令牌桶规则)"></a>Tolen Bucket Filte (TBF,令牌桶规则)</h5><p><img src="https://static001.geekbang.org/resource/image/14/9b/145c6f8593bf7603eae79246b9d6859b.jpg?wh=1894*1100" alt="img"></p><p>所有的网络包排成队列进行发送，但不是到了队头就能发送，而是需要拿到令牌才能发送。</p><p>令牌根据设定的速度生成，所以即便队列很长，也是按照一定的速度进行发送的。当没有包在队列中的时候，令牌还是以既定的速度生成，但是不是无限累积的，而是放满了桶为止。</p><p>设置桶的大小为了避免下面的情况：当长时间没有网络包发送的时候，积累了大量的令牌，突然来了大量的网络包，每个都能得到令牌，造成瞬间流量大增。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;公共的网络链路总会不可避免的产生带宽抢占的问题，我们通常使用QoS技术保障大多数用户的服务质量。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static001.geekbang.org/resource/image/74/11/747b0d537fd1705171f</summary>
+      
+    
+    
+    
+    
+    <category term="Computer Network" scheme="http://example.com/tags/Computer-Network/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TCP状态机</title>
+    <link href="http://example.com/2022/09/23/TCP/"/>
+    <id>http://example.com/2022/09/23/TCP/</id>
+    <published>2022-09-23T15:43:21.000Z</published>
+    <updated>2022-12-24T15:02:08.561Z</updated>
+    
+    <content type="html"><![CDATA[<p>一个TCP连接在它的生命周期内会有不同的状态。</p><p>下图说明了TCP连接可能会有的状态，以及基于事件的状态转换。事件中有的是应用程序的操作，有的是接收到了网络发过来的请求。</p><p><img src="https://upload-images.jianshu.io/upload_images/2846604-6a8557619966204d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p><p>TCP状态及其描述如下表。</p><table><thead><tr><th>状态</th><th>描述</th></tr></thead><tbody><tr><td>LISTEN</td><td>等待来自远程TCP应用程序的请求</td></tr><tr><td>SYN_SENT</td><td>发送连接请求后等待来自远程端点的确认。TCP第一次握手后客户端所处的状态</td></tr><tr><td>SYN-RECEIVED</td><td>该端点已经接收到连接请求并发送确认。 该端点正在等待最终确认。TCP第二次握手后服务端所处的状态</td></tr><tr><td>ESTABLISHED</td><td>代表连接已经建立起来了。这是连接数据传输阶段的正常状态</td></tr><tr><td>FIN_WAIT_1</td><td>等待来自远程TCP的终止连接请求或终止请求的确认</td></tr><tr><td>FIN_WAIT_2</td><td>在此端点发送终止连接请求后，等待来自远程TCP的连接终止请求</td></tr><tr><td>CLOSE_WAIT</td><td>该端点已经收到来自远程端点的关闭请求，此TCP正在等待本地应用程序的连接终止请求</td></tr><tr><td>CLOSING</td><td>等待来自远程TCP的连接终止请求确认</td></tr><tr><td>LAST_ACK</td><td>等待先前发送到远程TCP的连接终止请求的确认</td></tr><tr><td>TIME_WAIT</td><td>等待足够的时间来确保远程TCP接收到其连接终止请求的确认</td></tr></tbody></table><h2 id="TCP三次握手"><a href="#TCP三次握手" class="headerlink" title="TCP三次握手"></a>TCP三次握手</h2><p>当一个TCP连接建立时，发生了以下事情：</p><ol><li>服务端必须准备接收传入的连接。这通常通过调用<code>socket</code>，<code>bind</code>和<code>listen</code>来完成，称为被动打开。</li><li>客户端通过调用<code>connect</code>方法来发起一个主动的打开。客户端TCP会发送一个“同步”(SYN)段，它告诉服务器客户端在连接上发送的数据的初始序列号。通常情况下，SYN没有发送数据，它只包含一个IP头，TCP头和可能的TCP选项。</li><li>服务器必须确认（ACK）客户端的SYN，并且服务器还必须发送自己的SYN，其中包含服务器将在连接上发送的数据的初始序列号。</li><li>客户端必须确认服务器的SYN。</li></ol><p>下图显示了TCP三次握手的过程，以及客户端和服务端状态的变化。</p><p><img src="https://upload-images.jianshu.io/upload_images/2846604-91b9ed7c6b066f24.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p><h2 id="TCP四次挥手"><a href="#TCP四次挥手" class="headerlink" title="TCP四次挥手"></a>TCP四次挥手</h2><p>一个TCP连接需要四步断开：</p><ol><li>一个应用程序首先执行<code>close</code>，发送FIN段，这个操作被称为主动关闭，这意味着这一端完成数据的发送。</li><li>执行FIN的另一端执行被动关闭，该端发送ACK，确认该FIN。</li><li>被动关闭的一端执行<code>close</code>，向主动关闭的一方发送FIN。</li><li>主动关闭的一方确认收到的FIN。</li></ol><p>下图显示了一次典型的TCP四次挥手的过程，以及主动关闭方和被动关闭方的状态变化。在图中是客户端主动断开了连接，这里只是举个例子，服务端一样可以主动断开连接。</p><p><img src="https://upload-images.jianshu.io/upload_images/2846604-9677c82f02e126f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p><h2 id="关于TIME-WAIT状态"><a href="#关于TIME-WAIT状态" class="headerlink" title="关于TIME_WAIT状态"></a>关于TIME_WAIT状态</h2><p>TIME_WAIT状态应该是最让人疑惑的一个状态了。在上图中可以看到，执行主动断开的节点最后会进入这个状态，该节点会在此状态保存2倍的MSL（最大段生存期）。</p><p>TCP的每个实现都必须为MSL选择一个值。RFC 1122推荐的值为两分钟，伯克利派的实现使用30秒。这也就是说TIME_WAIT状态会维持1到4分钟。MSL是任何IP数据报可以在网络中生存的最长时间。这个时间是有限制的，因为每个数据报都包含一个8位的跳数限制，最大值是255.虽然这是一个跳数限制而不是一个真正的时间限制，但是根据这个限制来假设数据报的最长生命周期依然是有意义的。</p><p>网络中数据报丢失的原因通常是路由异常。一旦路由崩溃或者两个路由之间的链路断开，路由协议需要几秒或几分钟才能稳定，并找到一条备用路径。在这段时间内，可能发生路由回路。同时假设丢失是一个TCP数据报，则发生TCP超时，并且重新发送分组，重传的分组通过一些备用路径达到最终目的地。但是一段时间后（该时间小于MSL），路由循环被更正，在循环中丢失的数据报被发送到最终目的地。这个原始的数据报被称为丢失的副本或漫游副本。TCP协议必须处理这些数据报。</p><p>维持TIME_WAIT有两个原因：</p><ol><li>可靠地实现TCP的全双工连接终止。</li><li>允许旧的重复数据段在网络中过期</li></ol><p>在四次挥手中，假设最后的ACK丢失了，被动关闭方会重发FIN。主动关闭端必须维护状态，来允许被动关闭方重发最后的ACK；如果它没有维护这个状态，将会对重发FIN返回RST，被动关闭方会认为这是个错误。如果TCP正在执行彻底终止数据流的两个方向所需的所有工作（即全双工关闭），则必须正确处理这四个段中任何一个的丢失。所以执行主动关闭的一方必须在结束时保持TIME_WAIT状态：因为它可能必须重传最后的ACK。</p><p>现在来聊维持TIME_WAIT状态的第二个原因。假设在主机12.106.32.254的1500端口和206.168.112.219的21端口之间有一个TCP连接。此连接关闭后，在相通的地址和端口建立了另外一个连接。由于IP地址和端口相同，所以后一种连接被称为先前连接的“化身”。TCP必须防止连接中的旧副本在稍后再次出现，并被误解为属于同一连接的新“化身”。为此，TCP将不会启动当前处于TIME_WAIT状态的连接的新“化身”。由于TIME_WAIT状态的持续时间时两倍的MSL，因此TCP允许一个方向的数据在MSL秒内丢失，也允许回复在一个MSL秒内丢失。通过强制执行此规则，可以保证当一个TCP连接成功建立时，来自先前连接的所有旧的副本在网络中已过期。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;一个TCP连接在它的生命周期内会有不同的状态。&lt;/p&gt;
+&lt;p&gt;下图说明了TCP连接可能会有的状态，以及基于事件的状态转换。事件中有的是应用程序的操作，有的是接收到了网络发过来的请求。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://upload-images.jiansh</summary>
+      
+    
+    
+    
+    
+    <category term="Computer Network" scheme="http://example.com/tags/Computer-Network/"/>
     
   </entry>
   

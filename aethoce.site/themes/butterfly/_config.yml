@@ -455,13 +455,7 @@ microsoft_clarity:
 # Advertisement
 # --------------------------------------
 
-# Google Adsense (谷歌廣告)
-google_adsense:
-  enable: false
-  auto_ads: true
-  js: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js
-  client:
-  enable_page_level_ads: true
+
 
 # Insert ads manually (手動插入廣告)
 # ad:
@@ -628,7 +622,7 @@ subtitle:
   typeSpeed: 150 # type speed in milliseconds
   backSpeed: 50 # backspacing speed in milliseconds
   # loop (循環打字)
-  loop: true
+  loop: false
   # source 調用第三方服務
   # source: false 關閉調用
   # source: 1  調用一言網的一句話（簡體） https://hitokoto.cn/
@@ -704,9 +698,9 @@ aside:
 # busuanzi count for PV / UV in site
 # 訪問人數
 busuanzi:
-  site_uv: true
-  site_pv: true
-  page_pv: true
+  site_uv: false
+  site_pv: false
+  page_pv: false
 
 # Time difference between publish date and now (網頁運行時間)
 # Formal: Month/Day/Year Time or Year/Month/Day Time
