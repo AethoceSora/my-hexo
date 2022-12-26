@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>HTTP/2带来了什么特性 | Aethoce's Blog</title><meta name="author" content="Jinghong Li"><meta name="copyright" content="Jinghong Li"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="QLUT镜像站在圣诞节维护中带来了HTTP&#x2F;2协议的支持。新协议提供了诸多新特性。 二进制分帧HTTP&#x2F;2所有性能增强的核心在于新的二进制分帧层，如下图所示，它是所有其他功能和性能优化的基础，它定义了如何封装HTTP消息并在客户端与服务器之间传输。  HTTP&#x2F;2没有改动HTTP的应用语义，仍然使用HTTP的请求方法、状态码和头字段等规则，它主要修改了HTTP的报文传">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP&#x2F;2带来了什么特性">
+<meta property="og:url" content="http://example.com/2022/12/26/abouthttp2/index.html">
+<meta property="og:site_name" content="Aethoce&#39;s Blog">
+<meta property="og:description" content="QLUT镜像站在圣诞节维护中带来了HTTP&#x2F;2协议的支持。新协议提供了诸多新特性。 二进制分帧HTTP&#x2F;2所有性能增强的核心在于新的二进制分帧层，如下图所示，它是所有其他功能和性能优化的基础，它定义了如何封装HTTP消息并在客户端与服务器之间传输。  HTTP&#x2F;2没有改动HTTP的应用语义，仍然使用HTTP的请求方法、状态码和头字段等规则，它主要修改了HTTP的报文传">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/12/26/zWCEr8DyHUe1QcK.png">
+<meta property="article:published_time" content="2022-12-26T03:12:45.000Z">
+<meta property="article:modified_time" content="2022-12-26T03:30:48.857Z">
+<meta property="article:author" content="Jinghong Li">
+<meta property="article:tag" content="Computer Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/12/26/zWCEr8DyHUe1QcK.png"><link rel="shortcut icon" href="https://s2.loli.net/2022/12/11/a1NV3kg4pyznAeK.png"><link rel="canonical" href="http://example.com/2022/12/26/abouthttp2/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'HTTP/2带来了什么特性',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-26 11:30:48'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Aethoce's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2022/12/11/KFpGuHIvs32qEao.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2022/12/26/zWCEr8DyHUe1QcK.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Aethoce's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">HTTP/2带来了什么特性</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-12-26T03:12:45.000Z" title="发表于 2022-12-26 11:12:45">2022-12-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-26T03:30:48.857Z" title="更新于 2022-12-26 11:30:48">2022-12-26</time></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>QLUT镜像站在圣诞节维护中带来了HTTP&#x2F;2协议的支持。新协议提供了诸多新特性。</p>
+<h3 id="二进制分帧"><a href="#二进制分帧" class="headerlink" title="二进制分帧"></a>二进制分帧</h3><p>HTTP&#x2F;2所有性能增强的核心在于新的二进制分帧层，如下图所示，它是所有其他功能和性能优化的基础，它定义了如何封装HTTP消息并在客户端与服务器之间传输。</p>
+<p><img src="https://s2.loli.net/2022/12/26/HzTpYtJGe2jV7xI.png" alt="image.png"></p>
+<p>HTTP&#x2F;2没有改动HTTP的应用语义，仍然使用HTTP的请求方法、状态码和头字段等规则，它主要修改了HTTP的报文传输格式。HTTP&#x2F;1.1协议以换行符作为纯文本的分隔符，而HTTP&#x2F;2将所有传输的信息分割为更小的消息和帧，并采用二进制格式对它们编码，这些帧对应着特定数据流中的消息，他们都在一个TCP连接内复用。</p>
+<h3 id="优先级排序"><a href="#优先级排序" class="headerlink" title="优先级排序"></a>优先级排序</h3><p>将HTTP消息分解为很多独立的帧之后就可以复用多个数据流中的帧，客户端和服务器交错发送和传输这些帧的顺序就成为关键的性能决定因素。HTTP&#x2F;2允许每个数据流都有一个关联的权重和依赖关系，数据流依赖关系和权重的组合明确表达了资源优先级，这是一种用于提升浏览性能的关键功能。HTTP&#x2F;2协议还允许客户端随时更新这些优先级，我们可以根据用户互动和其他信号更改依赖关系和重新分配权重，这进一步优化了浏览器性能。</p>
+<h3 id="首部压缩"><a href="#首部压缩" class="headerlink" title="首部压缩"></a>首部压缩</h3><p>HTTP每次请求或响应都会携带首部信息用于描述资源属性。HTTP&#x2F;1.1使用文本的形式传输消息头，消息头中携带cookie每次都需要重复传输几百到几千的字节，这十分占用资源。</p>
+<p>HTTP&#x2F;2使用了HPACK算法来压缩头字段，这种压缩格式对传输的头字段进行编码，减少了头字段的大小。同时，在两端维护了索引表，用于记录出现过的头字段，后面在传输过程中就可以传输已经记录过的头字段的索引号，对端收到数据后就可以通过索引号找到对应的值。</p>
+<h3 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h3><p>多路复用允许同时通过单一的HTTP&#x2F;2连接发起多重的请求-响应消息，实现多流并行而并不依赖多个TCP连接，HTTP&#x2F;2把HTTP协议通信的基本单位缩小为一个一个的帧，这些帧对应着逻辑流中的消息，并行地在同一个TCP连接上双向交换消息。</p>
+<p>HTTP&#x2F;2基于二进制分帧层，HTTP&#x2F;2可以在共享TCP连接的基础上同时发送请求和响应。HTTP消息被分解为独立的帧，而不破坏消息本身的语义交错发出去，在另一端根据流标识符和首部将他们重新组装起来。通过多路复用技术，可以避免HTTP旧版本的消息头阻塞问题，极大提高传输性能。</p>
+<h3 id="服务器推送"><a href="#服务器推送" class="headerlink" title="服务器推送"></a>服务器推送</h3><p>HTTP2.0的一个强大的新功能，就是服务器可以对一个客户端请求发送多个响应。服务器向客户端推送资源无需客户端明确的请求。服务端根据客户端的请求，提前返回多个响应，推送额外的资源给客户端。如下图所示，客户端请求stream 1，服务端在返回stream 1的消息的同时推送了stream 2和stream 4。</p>
+<p><img src="https://s2.loli.net/2022/12/26/u9IdlQkWAiYZHvF.png" alt="image.png"></p>
+<p>服务端推送是一种在客户端请求之前发送数据的机制。在HTTP&#x2F;2中，服务器可以对一个客户端的请求发送多个响应。如果一个请求是由你的主页发送的，服务器可能会响应主页内容、logo以及样式表，因为服务端知道客户端会用到这些东西。这样不但减轻了数据传送冗余步骤，也加快了页面响应的速度，提高了用户体验。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Jinghong Li</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/12/26/abouthttp2/">http://example.com/2022/12/26/abouthttp2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Aethoce's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Computer-Network/">Computer Network</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2022/12/26/zWCEr8DyHUe1QcK.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/12/26/bbr/"><img class="next-cover" src="https://s2.loli.net/2022/12/26/zN9BEclKUFpyDtw.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">如何在服务端启用BBR拥塞控制算法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/10/13/QoS/" title="云场景下的网络QoS"><img class="cover" src="https://s2.loli.net/2022/12/24/FI1YkGehQyVKs9T.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-13</div><div class="title">云场景下的网络QoS</div></div></a></div><div><a href="/2022/09/23/TCP/" title="TCP状态机"><img class="cover" src="https://s2.loli.net/2022/12/24/FI1YkGehQyVKs9T.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-09-23</div><div class="title">TCP状态机</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2022/12/11/KFpGuHIvs32qEao.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jinghong Li</div><div class="author-info__description">为开放自由的互联网做点微小的贡献</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/AethoceSora"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/AethoceSora" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:lijinghong0233@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Welcome to Aethoce's blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%88%86%E5%B8%A7"><span class="toc-number">1.</span> <span class="toc-text">二进制分帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F"><span class="toc-number">2.</span> <span class="toc-text">优先级排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E9%83%A8%E5%8E%8B%E7%BC%A9"><span class="toc-number">3.</span> <span class="toc-text">首部压缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">多路复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%A8%E9%80%81"><span class="toc-number">5.</span> <span class="toc-text">服务器推送</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/12/26/abouthttp2/" title="HTTP/2带来了什么特性"><img src="https://s2.loli.net/2022/12/26/zWCEr8DyHUe1QcK.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HTTP/2带来了什么特性"/></a><div class="content"><a class="title" href="/2022/12/26/abouthttp2/" title="HTTP/2带来了什么特性">HTTP/2带来了什么特性</a><time datetime="2022-12-26T03:12:45.000Z" title="发表于 2022-12-26 11:12:45">2022-12-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/26/bbr/" title="如何在服务端启用BBR拥塞控制算法"><img src="https://s2.loli.net/2022/12/26/zN9BEclKUFpyDtw.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何在服务端启用BBR拥塞控制算法"/></a><div class="content"><a class="title" href="/2022/12/26/bbr/" title="如何在服务端启用BBR拥塞控制算法">如何在服务端启用BBR拥塞控制算法</a><time datetime="2022-12-25T17:09:26.000Z" title="发表于 2022-12-26 01:09:26">2022-12-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/26/http2/" title="如何在Nginx上支持HTTP/2"><img src="https://s2.loli.net/2022/12/26/zN9BEclKUFpyDtw.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何在Nginx上支持HTTP/2"/></a><div class="content"><a class="title" href="/2022/12/26/http2/" title="如何在Nginx上支持HTTP/2">如何在Nginx上支持HTTP/2</a><time datetime="2022-12-25T17:09:26.000Z" title="发表于 2022-12-26 01:09:26">2022-12-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/11/HPL/" title="高性能计算-基准测试程序Linpack（HPL）"><img src="https://s2.loli.net/2022/12/12/SH7Yhl2dIbEpzcm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="高性能计算-基准测试程序Linpack（HPL）"/></a><div class="content"><a class="title" href="/2022/12/11/HPL/" title="高性能计算-基准测试程序Linpack（HPL）">高性能计算-基准测试程序Linpack（HPL）</a><time datetime="2022-12-11T02:48:16.705Z" title="发表于 2022-12-11 10:48:16">2022-12-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/Graf/" title="QLUT镜像站的日志监控及预警方案"><img src="https://s2.loli.net/2022/12/24/FI1YkGehQyVKs9T.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="QLUT镜像站的日志监控及预警方案"/></a><div class="content"><a class="title" href="/2022/12/07/Graf/" title="QLUT镜像站的日志监控及预警方案">QLUT镜像站的日志监控及预警方案</a><time datetime="2022-12-06T17:27:20.000Z" title="发表于 2022-12-07 01:27:20">2022-12-07</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Jinghong Li</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script></div></body></html>

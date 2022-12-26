@@ -9,7 +9,7 @@ date: 2022/9/23 23:43:21
 
 下图说明了TCP连接可能会有的状态，以及基于事件的状态转换。事件中有的是应用程序的操作，有的是接收到了网络发过来的请求。
 
-![img](https:////upload-images.jianshu.io/upload_images/2846604-6a8557619966204d.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+![a21r1-84lt6.jpg](https://s2.loli.net/2022/12/25/kbcDZ3WdeETio8u.jpg)
 
 TCP状态及其描述如下表。
 
@@ -37,7 +37,7 @@ TCP状态及其描述如下表。
 
 下图显示了TCP三次握手的过程，以及客户端和服务端状态的变化。
 
-![img](https:////upload-images.jianshu.io/upload_images/2846604-91b9ed7c6b066f24.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+![ac793-tjj85.jpg](https://s2.loli.net/2022/12/25/NvTBnJWulGCPZk7.jpg)
 
 ## TCP四次挥手
 
@@ -50,7 +50,7 @@ TCP状态及其描述如下表。
 
 下图显示了一次典型的TCP四次挥手的过程，以及主动关闭方和被动关闭方的状态变化。在图中是客户端主动断开了连接，这里只是举个例子，服务端一样可以主动断开连接。
 
-![img](https:////upload-images.jianshu.io/upload_images/2846604-9677c82f02e126f9.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+![amjcz-udy5c.jpg](https://s2.loli.net/2022/12/25/ZLbSedsukzPBChD.jpg)
 
 ## 关于TIME_WAIT状态
 

@@ -1,3 +1,6 @@
+http://example.com/2022/12/26/abouthttp2/
+http://example.com/2022/12/26/http2/
+http://example.com/2022/12/26/bbr/
 http://example.com/2022/12/07/Graf/
 http://example.com/2022/09/23/TCP/
 http://example.com/2022/10/13/QoS/
