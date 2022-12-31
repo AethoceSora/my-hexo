@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Pytorch学习回顾--线性回归 | Aethoce's Blog</title><meta name="author" content="Jinghong Li"><meta name="copyright" content="Jinghong Li"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="生成数据集我们可以调用框架中现有的API来读取数据。我们将features和labels作为API的参数传递，并在实例化数据迭代器对象时指定batch_size。此外，布尔值is_train表示是否希望数据迭代器对象在每个迭代周期内打乱数据。 1234def load_array(data_arrays, batch_size, is_train&#x3D;True):     &quot;&quot;&amp;q">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pytorch学习回顾--线性回归">
+<meta property="og:url" content="http://example.com/2022/12/29/02/index.html">
+<meta property="og:site_name" content="Aethoce&#39;s Blog">
+<meta property="og:description" content="生成数据集我们可以调用框架中现有的API来读取数据。我们将features和labels作为API的参数传递，并在实例化数据迭代器对象时指定batch_size。此外，布尔值is_train表示是否希望数据迭代器对象在每个迭代周期内打乱数据。 1234def load_array(data_arrays, batch_size, is_train&#x3D;True):     &quot;&quot;&amp;q">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/cover.jpg">
+<meta property="article:published_time" content="2022-12-29T10:49:20.000Z">
+<meta property="article:modified_time" content="2022-12-31T11:08:20.691Z">
+<meta property="article:author" content="Jinghong Li">
+<meta property="article:tag" content="Pytorch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/cover.jpg"><link rel="shortcut icon" href="https://s2.loli.net/2022/12/11/a1NV3kg4pyznAeK.png"><link rel="canonical" href="http://example.com/2022/12/29/02/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-67XGNSFM2J"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-67XGNSFM2J');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Pytorch学习回顾--线性回归',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-31 19:08:20'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Aethoce's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2022/12/11/KFpGuHIvs32qEao.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/cover.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Aethoce's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Pytorch学习回顾--线性回归</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-12-29T10:49:20.000Z" title="发表于 2022-12-29 18:49:20">2022-12-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-31T11:08:20.691Z" title="更新于 2022-12-31 19:08:20">2022-12-31</time></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="生成数据集"><a href="#生成数据集" class="headerlink" title="生成数据集"></a>生成数据集</h2><p>我们可以调用框架中现有的API来读取数据。我们将<code>features</code>和<code>labels</code>作为API的参数传递，并在实例化数据迭代器对象时指定<code>batch_size</code>。此外，布尔值<code>is_train</code>表示是否希望数据迭代器对象在每个迭代周期内打乱数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">load_array</span>(<span class="params">data_arrays, batch_size, is_train=<span class="literal">True</span></span>): </span><br><span class="line">    <span class="string">&quot;&quot;&quot;构造一个PyTorch数据迭代器。&quot;&quot;&quot;</span></span><br><span class="line">    dataset = data.TensorDataset(*data_arrays)</span><br><span class="line">    <span class="keyword">return</span> data.DataLoader(dataset, batch_size, shuffle=is_train)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">batch_size = <span class="number">10</span></span><br><span class="line">data_iter = load_array((features, labels), batch_size)</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>data_iter</code>的方式与我们在3.2节中使用<code>data_iter</code>函数的方式相同。为了验证是否正常工作，让我们读取并打印第一个小批量样本。<br>与3.2节不同，这里我们使用<code>iter</code>构造Python迭代器，并使用<code>next</code>从迭代器中获取第一项。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">next</span>(<span class="built_in">iter</span>(data_iter))</span><br></pre></td></tr></table></figure>
+
+<h2 id="定义模型"><a href="#定义模型" class="headerlink" title="定义模型"></a>定义模型</h2><p>当我们在3.2节中实现线性回归时，我们明确定义了模型参数变量，并编写了计算的代码，这样通过基本的线性代数运算得到输出。但是，如果模型变得更加复杂，而且当你几乎每天都需要实现模型时，你会想简化这个过程。这种情况类似于从头开始编写自己的博客。做一两次是有益的、有启发性的，但如果每次你每需要一个博客就花一个月的时间重新发明轮子，那你将是一个糟糕的网页开发者。</p>
+<p>对于标准操作，我们可以使用框架的预定义好的层。这使我们只需关注使用哪些层来构造模型，而不必关注层的实现细节。我们首先定义一个模型变量<code>net</code>，它是一个<code>Sequential</code>类的实例。<code>Sequential</code>类为串联在一起的多个层定义了一个容器。当给定输入数据，<code>Sequential</code>实例将数据传入到第一层，然后将第一层的输出作为第二层的输入，依此类推。在下面的例子中，我们的模型只包含一个层，因此实际上不需要<code>Sequential</code>。但是由于以后几乎所有的模型都是多层的，在这里使用<code>Sequential</code>会让你熟悉标准的流水线。</p>
+<p>回顾3.1.2中的单层网络架构，这一单层被称为<em>全连接层</em>（fully-connected layer），因为它的每一个输入都通过矩阵-向量乘法连接到它的每个输出。</p>
+<p>在PyTorch中，全连接层在<code>Linear</code>类中定义。值得注意的是，我们将两个参数传递到<code>nn.Linear</code>中。第一个指定输入特征形状，即2，第二个指定输出特征形状，输出特征形状为单个标量，因此为1。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># `nn` 是神经网络的缩写</span></span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"></span><br><span class="line">net = nn.Sequential(nn.Linear(<span class="number">2</span>, <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+
+<h2 id="初始化模型参数"><a href="#初始化模型参数" class="headerlink" title="(初始化模型参数)"></a>(<strong>初始化模型参数</strong>)</h2><p>在使用<code>net</code>之前，我们需要初始化模型参数。如在线性回归模型中的权重和偏置。<br>深度学习框架通常有预定义的方法来初始化参数。<br>在这里，我们指定每个权重参数应该从均值为0、标准差为0.01的正态分布中随机采样，偏置参数将初始化为零。</p>
+<p>正如我们在构造<code>nn.Linear</code>时指定输入和输出尺寸一样。现在我们直接访问参数以设定初始值。我们通过<code>net[0]</code>选择网络中的第一个图层，然后使用<code>weight.data</code>和<code>bias.data</code>方法访问参数。然后使用替换方法<code>normal_</code>和<code>fill_</code>来重写参数值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net[<span class="number">0</span>].weight.data.normal_(<span class="number">0</span>, <span class="number">0.01</span>)</span><br><span class="line">net[<span class="number">0</span>].bias.data.fill_(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="定义损失函数"><a href="#定义损失函数" class="headerlink" title="定义损失函数"></a>定义损失函数</h2><p>计算均方误差使用的是<code>MSELoss</code>类。默认情况下，它返回所有样本损失的平均值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss = nn.MSELoss()</span><br></pre></td></tr></table></figure>
+
+<h2 id="定义优化算法"><a href="#定义优化算法" class="headerlink" title="定义优化算法"></a>定义优化算法</h2><p>小批量随机梯度下降算法是一种优化神经网络的标准工具，PyTorch在<code>optim</code>模块中实现了该算法的许多变种。当我们(<strong>实例化<code>SGD</code>实例</strong>)时，我们要指定优化的参数（可通过<code>net.parameters()</code>从我们的模型中获得）以及优化算法所需的超参数字典。小批量随机梯度下降只需要设置<code>lr</code>值，这里设置为0.03。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trainer = torch.optim.SGD(net.parameters(), lr=<span class="number">0.03</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h2><p>通过深度学习框架的高级API来实现我们的模型只需要相对较少的代码。<br>我们不必单独分配参数、不必定义我们的损失函数，也不必手动实现小批量随机梯度下降。</p>
+<p>我们将完整遍历一次数据集（<code>train_data</code>），不停地从中获取一个小批量的输入和相应的标签。对于每一个小批量，我们会进行以下步骤:</p>
+<ul>
+<li>通过调用<code>net(X)</code>生成预测并计算损失<code>l</code>（正向传播）。（计算损失）</li>
+<li>通过进行反向传播来计算梯度。（反向传播损失）</li>
+<li>通过调用优化器来更新模型参数。（优化更新参数）</li>
+</ul>
+<p>为了更好的衡量训练效果，我们计算每个迭代周期后的损失，并打印它来监控训练过程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">num_epochs = <span class="number">3</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    <span class="keyword">for</span> X, y <span class="keyword">in</span> data_iter:</span><br><span class="line">        l = loss(net(X) ,y)</span><br><span class="line">        trainer.zero_grad()</span><br><span class="line">        l.backward()</span><br><span class="line">        trainer.step()</span><br><span class="line">    l = loss(net(features), labels)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;epoch <span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>, loss <span class="subst">&#123;l:f&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>下面我们比较生成数据集的真实参数和通过有限数据训练获得的模型参数。<br>要访问参数，我们首先从<code>net</code>访问所需的层，然后读取该层的权重和偏置。<br>正如在从零开始实现中一样，我们估计得到的参数与生成数据的真实参数非常接近。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">w = net[<span class="number">0</span>].weight.data</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;w的估计误差：&#x27;</span>, true_w - w.reshape(true_w.shape))</span><br><span class="line">b = net[<span class="number">0</span>].bias.data</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;b的估计误差：&#x27;</span>, true_b - b)</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Jinghong Li</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/12/29/02/">http://example.com/2022/12/29/02/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Aethoce's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Pytorch/">Pytorch</a></div><div class="post_share"><div class="social-share" data-image="/img/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/12/31/SYN/"><img class="prev-cover" src="/img/cover.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">记录镜像站遭遇SYN泛洪攻击的诊断与防御</div></div></a></div><div class="next-post pull-right"><a href="/2022/12/26/abouthttp2/"><img class="next-cover" src="https://s2.loli.net/2022/12/26/zWCEr8DyHUe1QcK.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">HTTP/2带来了什么特性</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/12/22/01/" title="Pytorch学习回顾--数据预处理"><img class="cover" src="/img/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-12-22</div><div class="title">Pytorch学习回顾--数据预处理</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2022/12/11/KFpGuHIvs32qEao.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jinghong Li</div><div class="author-info__description">为开放自由的互联网做点微小的贡献</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/AethoceSora"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/AethoceSora" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:lijinghong0233@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Welcome to Aethoce's blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">生成数据集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">定义模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">(初始化模型参数)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">定义损失函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">定义优化算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83"><span class="toc-number">6.</span> <span class="toc-text">训练</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/12/31/HPL/" title="高性能计算-基准测试程序Linpack（HPL）"><img src="https://s2.loli.net/2022/12/12/SH7Yhl2dIbEpzcm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="高性能计算-基准测试程序Linpack（HPL）"/></a><div class="content"><a class="title" href="/2022/12/31/HPL/" title="高性能计算-基准测试程序Linpack（HPL）">高性能计算-基准测试程序Linpack（HPL）</a><time datetime="2022-12-31T10:07:01.722Z" title="发表于 2022-12-31 18:07:01">2022-12-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/31/SYN/" title="记录镜像站遭遇SYN泛洪攻击的诊断与防御"><img src="/img/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="记录镜像站遭遇SYN泛洪攻击的诊断与防御"/></a><div class="content"><a class="title" href="/2022/12/31/SYN/" title="记录镜像站遭遇SYN泛洪攻击的诊断与防御">记录镜像站遭遇SYN泛洪攻击的诊断与防御</a><time datetime="2022-12-31T10:07:01.722Z" title="发表于 2022-12-31 18:07:01">2022-12-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/29/02/" title="Pytorch学习回顾--线性回归"><img src="/img/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pytorch学习回顾--线性回归"/></a><div class="content"><a class="title" href="/2022/12/29/02/" title="Pytorch学习回顾--线性回归">Pytorch学习回顾--线性回归</a><time datetime="2022-12-29T10:49:20.000Z" title="发表于 2022-12-29 18:49:20">2022-12-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/26/abouthttp2/" title="HTTP/2带来了什么特性"><img src="https://s2.loli.net/2022/12/26/zWCEr8DyHUe1QcK.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HTTP/2带来了什么特性"/></a><div class="content"><a class="title" href="/2022/12/26/abouthttp2/" title="HTTP/2带来了什么特性">HTTP/2带来了什么特性</a><time datetime="2022-12-26T03:12:45.000Z" title="发表于 2022-12-26 11:12:45">2022-12-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/26/bbr/" title="如何在服务端启用BBR拥塞控制算法"><img src="https://s2.loli.net/2022/12/26/zN9BEclKUFpyDtw.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何在服务端启用BBR拥塞控制算法"/></a><div class="content"><a class="title" href="/2022/12/26/bbr/" title="如何在服务端启用BBR拥塞控制算法">如何在服务端启用BBR拥塞控制算法</a><time datetime="2022-12-25T17:09:26.000Z" title="发表于 2022-12-26 01:09:26">2022-12-26</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Jinghong Li</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script></div></body></html>
